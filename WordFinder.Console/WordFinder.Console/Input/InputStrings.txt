@@ -1,0 +1,10 @@
+﻿cold
+wind
+snow
+chill
+class
+interface
+instance
+way
+rock
+cot
