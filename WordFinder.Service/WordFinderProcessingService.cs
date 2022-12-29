@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using WordFinder.Core;
 using WordFinder.Service.Interface;
 
@@ -19,6 +18,7 @@ namespace WordFinder.Service
                 InputCharacterPattern.Add(string.Empty);
             }
 
+            //Creating column patterns and adding the patterns to the pattern list
             foreach (var item in InputCharacterMatrixArray)
             {
                 foreach (char ch in item.ToCharArray())
@@ -34,6 +34,7 @@ namespace WordFinder.Service
                 count = 0;
             }
 
+            //Adding the existing row patterns to the matrix
             foreach (var item in InputCharacterMatrixArray)
             {
                 InputCharacterPattern.Add(item);

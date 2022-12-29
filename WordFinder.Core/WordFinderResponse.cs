@@ -2,7 +2,6 @@
 
 namespace WordFinder.Core
 {
-    using System;
     using System.Collections.Generic;
 
     public class WordFinderResponse
