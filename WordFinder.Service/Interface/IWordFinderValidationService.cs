@@ -9,10 +9,7 @@ namespace WordFinder.Service.Interface
     {
         public List<string> GetValidInputStrings(IEnumerable<string> InputStrings, WordFinderResponse wordFinderResponse);
 
-        public bool DoesMatrixContainNonEnglishCharacters(char[][] InputMatrix);
-
         public bool IsSquareMatrix(IEnumerable<string> InputMatrix);
-
 
         public bool IsInputStringEmpty(IEnumerable<string> InputStrings);
     }

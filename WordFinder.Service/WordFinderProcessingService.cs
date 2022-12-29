@@ -9,13 +9,6 @@ namespace WordFinder.Service
 {
     public class WordFinderProcessingService : IWordFinderProcessingService
     {
-        private readonly IWordFinderValidationService _wordFinderValidationService;
-
-        public WordFinderProcessingService(IWordFinderValidationService wordFinderValidationService)
-        {
-            _wordFinderValidationService = wordFinderValidationService;
-        }
-
         public void CreateInputMatrixPattern(IEnumerable<string> InputCharacterMatrixArray, List<string> InputCharacterPattern)
         {
 

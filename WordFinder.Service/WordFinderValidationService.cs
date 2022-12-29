@@ -8,11 +8,6 @@ namespace WordFinder.Service
 {
     public class WordFinderValidationService : IWordFinderValidationService
     {
-        public bool DoesMatrixContainNonEnglishCharacters(char[][] InputMatrix)
-        {
-            throw new NotImplementedException();
-        }
-
         public List<string> GetValidInputStrings(IEnumerable<string> InputStrings, WordFinderResponse wordFinderResponse)
         {
             var validInputStrings = new List<string>();
