@@ -11,7 +11,7 @@ namespace WordFinder.Service.Interface
 
         public bool DoesMatrixContainNonEnglishCharacters(char[][] InputMatrix);
 
-        public bool IsSquareMatrix(char[][] InputMatrix);
+        public bool IsSquareMatrix(IEnumerable<string> InputMatrix);
 
 
         public bool IsInputStringEmpty(IEnumerable<string> InputStrings);

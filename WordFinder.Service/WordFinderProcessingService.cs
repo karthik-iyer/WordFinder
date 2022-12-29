@@ -15,18 +15,42 @@ namespace WordFinder.Service
         {
             _wordFinderValidationService = wordFinderValidationService;
         }
-        public char[][] CreateCharacterArray(IEnumerable<string> InputCharacterMatrix)
+
+        public void CreateInputMatrixPattern(IEnumerable<string> InputCharacterMatrixArray, List<string> InputCharacterPattern)
         {
-            //Here assuming that the input character matrix number of characters per string in the matrix is same as the number of elements of the matrix to be a square matrix. 
-          
 
-            var characterMatrix = InputCharacterMatrix.Select(line => line.ToCharArray()).ToArray();
+            var count = 0;
 
-            
+            for (int index = 0; index < InputCharacterMatrixArray.Count(); index++)
+            {
+                InputCharacterPattern.Add(string.Empty);
+            }
 
-            return characterMatrix;
+            foreach (var item in InputCharacterMatrixArray)
+            {
+                foreach (char ch in item.ToCharArray())
+                {
+                    if(!IsLetter(ch))
+                    {
+                        throw new InvalidOperationException("Input Matrix Array has invalid characters. The WordFinder algorithm cannot be processed. Please make sure the characters are (A-Z) or (a-z)");
+                    }
 
+                    InputCharacterPattern[count] = InputCharacterPattern[count] + ch;
+                    count++;
+                }
+                count = 0;
+            }
 
+            foreach (var item in InputCharacterMatrixArray)
+            {
+                InputCharacterPattern.Add(item);
+
+            }
+        }
+
+        private bool IsLetter(char ch)
+        {
+                return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');            
         }
 
         public bool IsInputStringFoundInMatrix(IEnumerable<string> InputPatterns, IEnumerable<string> InputStrings,WordFinderResponse wordFinderResponse)
@@ -38,6 +62,7 @@ namespace WordFinder.Service
                     if(inputPattern.IndexOf(InputString,StringComparison.OrdinalIgnoreCase) >=0)
                     {
                         wordFinderResponse.StringsFound.Add(InputString);
+                        break;
                     }    
                 }
                 if(!wordFinderResponse.StringsFound.Contains(InputString))
@@ -48,7 +73,6 @@ namespace WordFinder.Service
             }
 
             return !(wordFinderResponse.StringsNotFoundWithErrors.Count > 0);
-
         }
     }
 }

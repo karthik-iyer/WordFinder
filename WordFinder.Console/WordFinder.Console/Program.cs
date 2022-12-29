@@ -11,19 +11,15 @@
 
     class Program
     {
+       
         static void Main()
         {
+            
             try
             {
                 //Add Service Dependencies here
-                var services = new ServiceCollection();
-                services.AddSingleton<IWordFinderProcessingService, WordFinderProcessingService>();
-                services.AddSingleton<IWordFinderValidationService, WordFinderValidationService>();
-
-                var serviceProvider = services.BuildServiceProvider();
-                var wordFinderProcessingService = serviceProvider.GetService<IWordFinderProcessingService>();
-                var wordFinderValidationService = serviceProvider.GetService<IWordFinderValidationService>();
-
+               var wordFinderProcessingService = AddServiceDependencies().Item1;
+               var wordFinderValidationService = AddServiceDependencies().Item2;
 
                 //Create Instance of the WordFinderResponse
                 var wordFinderResponse = new WordFinderResponse();
@@ -32,50 +28,15 @@
                 //Read Input Strings Array
                 var inputStringsArray = File.ReadAllLines("Input\\InputStrings.txt");
 
-                //IsInputString List empty
-                 wordFinderValidationService.IsInputStringEmpty(inputStringsArray);               
-
-
-                var validInputList = wordFinderValidationService.GetValidInputStrings(inputStringsArray,wordFinderResponse);
-
-
+                var validInputList = ValidateInputStrings(wordFinderValidationService, wordFinderResponse, inputStringsArray);
 
                 //Reading Input and create a character matrix
                 var inputCharacterMatrixArray = File.ReadAllLines("Input\\InputCharacterMatrix.txt");
 
+                List<string> inputCharacterPattern = InputMatrixValidation(wordFinderValidationService, inputCharacterMatrixArray);
 
+                wordFinderProcessingService.CreateInputMatrixPattern(inputCharacterMatrixArray, inputCharacterPattern);
 
-                //Creates Character Matrix and Validates InputMatrix for Square matrix and characters to be alphabets
-                var inputCharacterPattern = new List<string>();
-
-                var inputMatrix = wordFinderProcessingService.CreateCharacterArray(inputCharacterMatrixArray);
-
-                var count = 0;
-
-                for (int index =0; index < inputCharacterMatrixArray.Length; index++)
-                {
-                    inputCharacterPattern.Add(string.Empty);
-                }
-
-                foreach (var item in inputCharacterMatrixArray)
-                {
-                    foreach (char ch in item.ToCharArray())
-                    {
-                        inputCharacterPattern[count] = inputCharacterPattern[count] + ch;
-                        count++;
-                    }
-                    count = 0;
-                }
-
-                foreach (var item in inputCharacterMatrixArray)
-                {
-                    inputCharacterPattern.Add(item);
-
-                }
-
-               
-
-              
 
                 //After getting the character matrix process the input Strings to check if they are there in the matrix. 
                 //Assumptions here are  The patterns can be found from left to right or from top to bottom .
@@ -86,37 +47,68 @@
 
                 var IsAllPatternsFound = wordFinderProcessingService.IsInputStringFoundInMatrix(inputCharacterPattern, validInputList, wordFinderResponse);
 
-                Console.WriteLine("The following strings were found in the pattern");
-                foreach (var validInput in wordFinderResponse.StringsFound)
-                {
-                    Console.WriteLine(validInput);
-
-                }
-
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine("The following strings were not found in the pattern");
-                foreach (var inValidInput in wordFinderResponse.StringsNotFoundWithErrors)
-                {
-                    Console.WriteLine(inValidInput.InputStringNotFound + $". Error Message : {inValidInput.ErrorMessage}");
-
-                }
+                DisplayOutputOfStrings(wordFinderResponse);
             }
             catch (Exception ex)
             {
 
-                Console.WriteLine($"An Error Occured while executing the program. {ex}");
+                Console.WriteLine($"An Error Occured while executing the program. {ex.Message}");
             }
-                
-          
 
-           
+        }
 
-            
+        private static void DisplayOutputOfStrings(WordFinderResponse wordFinderResponse)
+        {
+            Console.WriteLine("The following strings were found in the pattern");
+            foreach (var validInput in wordFinderResponse.StringsFound)
+            {
+                Console.WriteLine(validInput);
 
+            }
 
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("The following strings were not found in the pattern");
+            foreach (var inValidInput in wordFinderResponse.StringsNotFoundWithErrors)
+            {
+                Console.WriteLine(inValidInput.InputStringNotFound + $". Error Message : {inValidInput.ErrorMessage}");
 
+            }
+        }
+
+        private static List<string> InputMatrixValidation(IWordFinderValidationService wordFinderValidationService, string[] inputCharacterMatrixArray)
+        {
+            //For a Given Input character Matrix Validate if its a square matrix
+            wordFinderValidationService.IsSquareMatrix(inputCharacterMatrixArray);
+
+            //Creates Character Matrix and Validates InputMatrix for Square matrix and characters to be alphabets
+            var inputCharacterPattern = new List<string>();
+            return inputCharacterPattern;
+        }
+
+        private static List<string> ValidateInputStrings(IWordFinderValidationService wordFinderValidationService, WordFinderResponse wordFinderResponse, string[] inputStringsArray)
+        {
+
+            //IsInputString List empty
+            wordFinderValidationService.IsInputStringEmpty(inputStringsArray);
+
+            //From the given list of input strings , just get the valid string list.
+            //If the string is invalid , put them in the errorList.
+            var validInputList = wordFinderValidationService.GetValidInputStrings(inputStringsArray, wordFinderResponse);
+            return validInputList;
+        }
+
+        private static (IWordFinderProcessingService,IWordFinderValidationService) AddServiceDependencies()
+        {
+            var services = new ServiceCollection();
+            services.AddSingleton<IWordFinderProcessingService, WordFinderProcessingService>();
+            services.AddSingleton<IWordFinderValidationService, WordFinderValidationService>();
+
+            var serviceProvider = services.BuildServiceProvider();
+            var wordFinderProcessingService = serviceProvider.GetService<IWordFinderProcessingService>();
+           var  wordFinderValidationService = serviceProvider.GetService<IWordFinderValidationService>();
+            return (wordFinderProcessingService, wordFinderValidationService);
         }
     }
 }

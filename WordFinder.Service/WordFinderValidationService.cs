@@ -35,17 +35,33 @@ namespace WordFinder.Service
 
         public bool IsInputStringEmpty(IEnumerable<string> InputStrings)
         {
-            if (InputStrings.ToList().Count <= 0)
+            if (InputStrings.Count() <= 0)
             {
                 throw new ArgumentNullException("Input String is Null or Empty");
             }
             return true;
         }
 
-        public bool IsSquareMatrix(char[][] InputMatrix)
+        public bool IsSquareMatrix(IEnumerable<string> InputMatrix)
         {
-            return InputMatrix[0].GetLength(0) == InputMatrix.GetLength(1);
+            var rowSize = InputMatrix.Count();
 
+            var columnSize = InputMatrix.FirstOrDefault().Length;
+
+            if(rowSize != columnSize)
+            {
+                throw new InvalidOperationException("The given Matrix is not a square matrix");
+            }
+
+            foreach (var item in InputMatrix)
+            {
+                if(item.Length != columnSize)
+                {
+                    throw new InvalidOperationException("The given Matrix is not a square matrix");
+                }
+            }
+
+            return true;
         }
 
       
